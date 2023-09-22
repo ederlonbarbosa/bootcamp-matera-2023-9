@@ -1,8 +1,10 @@
 package com.matera.bootcampmatera.controller;
 
+import com.matera.bootcampmatera.exception.ContaInvalidaException;
 import com.matera.bootcampmatera.model.Conta;
+import com.matera.bootcampmatera.service.ContaService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,17 +41,15 @@ public class ContaController {
     }
 
     @PostMapping
-    public ResponseEntity<Conta> novaConta(@RequestBody Conta conta) {
-        return ResponseEntity.ok(contaService.criar(conta));
+    public ResponseEntity<Conta> novaConta(@RequestBody Conta conta) throws ContaInvalidaException {
+//        return ResponseEntity.ok(contaService.criarOuAtualizar(conta));
+        return ResponseEntity.status(HttpStatus.CREATED).body(contaService.criarOuAtualizar(conta));
     }
 
     // http://localhost:8080/contas/1
     @GetMapping("/{id}")
     public ResponseEntity<Conta> buscarPorId(@PathVariable Long id) {
-        List<Conta> contas = contaService.getContas();
-        Optional<Conta> contaOptional = contas.stream()
-                .filter(conta -> conta.getId().equals(id))
-                .findFirst();
+        Optional<Conta> contaOptional = contaService.buscaPorId(id);
         if (contaOptional.isPresent()) {
             Conta conta = contaOptional.get();
             return ResponseEntity.ok(conta);
@@ -59,17 +59,12 @@ public class ContaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Conta> atualizar(@PathVariable Long id, @RequestBody Conta contaAtualizada) {
-        List<Conta> contas = contaService.getContas();
-        Optional<Conta> contaOptional = contas.stream()
-                .filter(conta -> conta.getId().equals(id))
-                .findFirst();
+    public ResponseEntity<Conta> atualizar(@PathVariable Long id, @RequestBody Conta contaAtualizada) throws ContaInvalidaException {
+        Optional<Conta> contaOptional = contaService.buscaPorId(id);
 
         if (contaOptional.isPresent()) {
-            Conta conta = contaOptional.get();
-            contas.remove(conta);
-            contaAtualizada.setId(conta.getId());
-            contas.add(contaAtualizada);
+            contaAtualizada.setId(id);
+            contaService.criarOuAtualizar(contaAtualizada);
             return ResponseEntity.ok(contaAtualizada);
         } else {
             return ResponseEntity.notFound().build();
@@ -78,14 +73,11 @@ public class ContaController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        List<Conta> contas = contaService.getContas();
-        Optional<Conta> contaOptional = contas.stream()
-                .filter(conta -> conta.getId().equals(id))
-                .findFirst();
+        Optional<Conta> contaOptional = contaService.buscaPorId(id);
 
         if (contaOptional.isPresent()) {
             Conta conta = contaOptional.get();
-            contas.remove(conta);
+            contaService.delete(conta);
             return ResponseEntity.noContent().build(); //204
         } else {
             return ResponseEntity.notFound().build();
