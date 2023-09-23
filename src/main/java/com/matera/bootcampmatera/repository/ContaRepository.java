@@ -1,4 +1,4 @@
-package com.matera.bootcampmatera;
+package com.matera.bootcampmatera.repository;
 
 import com.matera.bootcampmatera.model.Conta;
 import org.springframework.data.jpa.repository.JpaRepository;

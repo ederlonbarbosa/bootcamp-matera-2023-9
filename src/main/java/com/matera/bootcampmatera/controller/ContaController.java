@@ -2,7 +2,10 @@ package com.matera.bootcampmatera.controller;
 
 import com.matera.bootcampmatera.exception.ContaInvalidaException;
 import com.matera.bootcampmatera.model.Conta;
+import com.matera.bootcampmatera.model.Titular;
 import com.matera.bootcampmatera.service.ContaService;
+import com.matera.bootcampmatera.service.TitularService;
+import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -23,26 +25,32 @@ import java.util.Optional;
 @RequestMapping("/contas")
 @RequiredArgsConstructor
 public class ContaController {
-//  1 maneira
-//    @Autowired
-//    private ContaService contaService;
-
-    // 2 maneira e adicionando no onstrutor ou usando @RequiredArgsConstructor do lombok
-//    private final ContaService contaService;
-//    public ContaController(ContaService contaService) {
-//        this.contaService = contaService;
-//    }
 
     private final ContaService contaService;
+    private final TitularService titularService;
 
     @GetMapping
     public List<Conta> teste() {
         return contaService.getContas();
     }
 
+    @PostMapping("/lancamentos/{idConta}/debito/{valor}")
+    public ResponseEntity<Conta> debitar(@PathVariable Long idConta, @PathVariable BigDecimal valor) throws ContaInvalidaException {
+        Conta conta = contaService.debitaConta(idConta, valor);
+        return ResponseEntity.status(HttpStatus.CREATED).body(conta);
+    }
+
+    @PostMapping("/lancamentos/{idConta}/credito/{valor}")
+    public ResponseEntity<Conta> creditar(@PathVariable Long idConta, @PathVariable BigDecimal valor) throws ContaInvalidaException {
+        Conta conta = contaService.creditarConta(idConta, valor);
+        return ResponseEntity.status(HttpStatus.CREATED).body(conta);
+    }
+
     @PostMapping
     public ResponseEntity<Conta> novaConta(@RequestBody Conta conta) throws ContaInvalidaException {
-//        return ResponseEntity.ok(contaService.criarOuAtualizar(conta));
+        Titular titular = conta.getTitular();
+        Titular titularSalvo = titularService.criarOuAtualizar(titular);
+        conta.setTitular(titularSalvo);
         return ResponseEntity.status(HttpStatus.CREATED).body(contaService.criarOuAtualizar(conta));
     }
 
@@ -84,12 +92,4 @@ public class ContaController {
         }
     }
 
-
-    // 3 maneira "setinjection"
-//    private ContaService contaService;
-//
-//    @Autowired
-//    public void setContaService(ContaService contaService) {
-//        this.contaService = contaService;
-//    }
 }
