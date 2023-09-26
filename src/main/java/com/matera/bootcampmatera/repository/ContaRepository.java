@@ -20,6 +20,8 @@ public interface ContaRepository extends JpaRepository<Conta, Long> {
 
     Conta findByAgencia(String agencia);
 
+    Conta findByTitularCpf(String cpf);
+
     @Query("select c from Conta c order by c.numeroConta asc")
     Conta buscarContasOrdenadas();
 

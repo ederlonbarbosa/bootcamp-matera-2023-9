@@ -1,5 +1,7 @@
 package com.matera.bootcampmatera.controller;
 
+import com.matera.bootcampmatera.dto.RequestPixDTO;
+import com.matera.bootcampmatera.dto.ResponsePixDTO;
 import com.matera.bootcampmatera.exception.ContaInvalidaException;
 import com.matera.bootcampmatera.model.Conta;
 import com.matera.bootcampmatera.model.Titular;
@@ -30,8 +32,14 @@ public class ContaController {
     private final TitularService titularService;
 
     @GetMapping
-    public List<Conta> teste() {
+    public List<Conta> contas() {
         return contaService.getContas();
+    }
+
+
+    @PostMapping("/lancamentos/pix")
+    public ResponseEntity<ResponsePixDTO> pix(@RequestBody RequestPixDTO pixDTO){
+        return ResponseEntity.status(HttpStatus.OK).body(contaService.pix(pixDTO));
     }
 
     @PostMapping("/lancamentos/{idConta}/debito/{valor}")

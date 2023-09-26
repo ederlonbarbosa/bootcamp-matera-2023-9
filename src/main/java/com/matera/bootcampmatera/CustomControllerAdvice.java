@@ -1,6 +1,7 @@
 package com.matera.bootcampmatera;
 
 import com.matera.bootcampmatera.exception.ContaInvalidaException;
+import com.matera.bootcampmatera.exception.ContaSemSaldoException;
 import com.matera.bootcampmatera.exception.MensagemErro;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,4 +16,11 @@ public class CustomControllerAdvice {
         MensagemErro mensagemErro = new MensagemErro(ex.getMessage());
         return new ResponseEntity<>(mensagemErro, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ContaSemSaldoException.class)
+    public ResponseEntity<MensagemErro> contaSemSaldoException(ContaSemSaldoException ex) {
+        MensagemErro mensagemErro = new MensagemErro(ex.getMessage());
+        return new ResponseEntity<>(mensagemErro, HttpStatus.CONFLICT);
+    }
+
 }

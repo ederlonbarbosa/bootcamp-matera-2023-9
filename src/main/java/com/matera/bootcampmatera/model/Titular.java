@@ -14,7 +14,7 @@ public class Titular {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
-    private String Cpf;
+    private String cpf;
 
     public Titular() {
     }
@@ -22,6 +22,6 @@ public class Titular {
     public Titular(Long id, String nome, String cpf) {
         this.id = id;
         this.nome = nome;
-        Cpf = cpf;
+        this.cpf = cpf;
     }
 }

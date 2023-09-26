@@ -1,9 +1,12 @@
 package com.matera.bootcampmatera.service;
 
+import com.matera.bootcampmatera.dto.RequestPixDTO;
+import com.matera.bootcampmatera.dto.ResponsePixDTO;
 import com.matera.bootcampmatera.exception.ContaInvalidaException;
 import com.matera.bootcampmatera.model.Conta;
 import com.matera.bootcampmatera.repository.ContaRepository;
 import java.math.BigDecimal;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,20 @@ import static java.util.Objects.isNull;
 public class ContaService {
 
     private final ContaRepository contaRepository;
+
+    public ResponsePixDTO pix(RequestPixDTO pixDTO){
+
+        Conta contaOrigem = contaRepository.findByTitularCpf(pixDTO.getChaveOrigem());
+
+        Conta contaDestino = contaRepository.findByTitularCpf(pixDTO.getChaveDestino());
+
+        contaOrigem.enviarPix(contaDestino, pixDTO.getValor());
+
+        contaRepository.saveAll(List.of(contaOrigem, contaDestino));
+
+        return new ResponsePixDTO(contaOrigem.getSaldo(), contaDestino.getSaldo());
+
+    }
 
     public Conta criarOuAtualizar(Conta conta) throws ContaInvalidaException {
         if(isNull(conta.getAgencia())){

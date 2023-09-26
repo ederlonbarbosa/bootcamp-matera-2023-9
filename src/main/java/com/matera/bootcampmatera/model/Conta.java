@@ -1,6 +1,6 @@
 package com.matera.bootcampmatera.model;
 
-import jakarta.persistence.Column;
+import com.matera.bootcampmatera.exception.ContaInvalidaException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,14 +16,10 @@ public class Conta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "NUMERO")
     private String numeroConta;
-    @Column(name = "AGENCIA")
     private String agencia;
-    @Column(name = "SALDO")
     private BigDecimal saldo = BigDecimal.ZERO;
     @OneToOne
-    @Column(name = "TITULAR")
     private Titular titular;
 
     public Conta() {
@@ -39,6 +35,16 @@ public class Conta {
 
     public void debito(BigDecimal valor){
         saldo = saldo.subtract(valor);
+    }
+
+    public void enviarPix(Conta contaDestino, BigDecimal valor) {
+
+        if (this.saldo.compareTo(valor) <= 0){
+            throw new ContaInvalidaException("Conta sem saldo disponível.");
+        }
+
+        this.debito(valor);
+        contaDestino.credito(valor);
     }
 
     public void credito(BigDecimal valor){
