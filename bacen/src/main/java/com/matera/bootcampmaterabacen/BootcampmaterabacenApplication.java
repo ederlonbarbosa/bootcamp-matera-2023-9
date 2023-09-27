@@ -1,13 +1,13 @@
-package com.matera.bootcampmatera;
+package com.matera.bootcampmaterabacen;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BootcampMateraApplication {
+public class BootcampmaterabacenApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BootcampMateraApplication.class, args);
+		SpringApplication.run(BootcampmaterabacenApplication.class, args);
 	}
 
 }

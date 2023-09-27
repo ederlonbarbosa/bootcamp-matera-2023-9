@@ -1,0 +1,18 @@
+server:
+  port: 8081
+
+# Habilita o console web do H2
+spring:
+  h2:
+    console:
+      enabled: true
+  # Configuração da fonte de dados
+  datasource:
+    url: jdbc:h2:mem:bacendb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  # JPA e Hibernate config
+  jpa:
+    hibernate:
+      ddl-auto: update

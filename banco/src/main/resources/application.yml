@@ -1,0 +1,28 @@
+# Habilita o console web do H2
+spring:
+  h2:
+    console:
+      enabled: true
+  # Configuração da fonte de dados
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  # JPA e Hibernate config
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: full
+
+logging:
+  level:
+    com:
+      matera:
+        bootcampmatera:
+          controller: DEBUG
